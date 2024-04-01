@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using Scripts.Controller.Turret;
+using Scripts.Keys;
 using Scripts.Models;
 using Scripts.Signals;
-using Scripts.Turret;
-using Scripts.Keys;
 using UnityEngine;
 using Zenject;
 
@@ -10,8 +10,6 @@ namespace Scripts.Manager
 {
     public class TurretManager : MonoBehaviour
     {
-        [SerializeField] private int maxTowerCount = 3;
-        
         private SignalBus _signalBus;
         public List<TurretTower> turretTowers;
         public TurretTower currentSelected;
@@ -20,6 +18,8 @@ namespace Scripts.Manager
         private Vector3 _cacheCameraRayResults;
         private LayerMask _floorMask;
         private bool _inMenu;
+
+        private OnCoinUpdated _onCoinUpdated;
         
         [Inject] public GameModel GameModel;
         
@@ -35,18 +35,18 @@ namespace Scripts.Manager
 
             _inMenu = true;
             _cacheCameraRay = Vector3.zero;
-            _floorMask = LayerMask.GetMask("Floor");
+            _onCoinUpdated = new OnCoinUpdated();
+            _floorMask = LayerMask.GetMask("TowerSelection");
             Reset();
         }
         public void Reset()
         {
-            for (int i = 0; i < GameModel.TowerNumber; i++)
+            for (int i = 0; i < turretTowers.Count; i++)
             {
-                turretTowers[i].gameObject.SetActive(true);
+                turretTowers[i].gameObject.SetActive(i<GameModel.TowerNumber);
                 turretTowers[i].id = i;
-                turretTowers[i].SetUpgrade(GameModel.TowerUpgrade(i));
+                turretTowers[i].SetValues(GameModel.TowerUpgrade(i));
                 turretTowers[i].DeSelect();
-                turretTowers[i].health = 1000f;
             }
         }
         private void OnLevelStart()
@@ -61,14 +61,36 @@ namespace Scripts.Manager
         }
         private void OnTowerUnlock()
         {
+            if(GameModel.CoinNumber < 100)
+                return;
+
+            GameModel.CoinNumber -= 100;
             GameModel.TowerNumber++;
             Reset();
             
+            _onCoinUpdated.amount = GameModel.CoinNumber;
+            _signalBus.Fire(_onCoinUpdated);
             _signalBus.Fire<OnStartUIUpdate>();
         }
-
+        public void OnTowerUpgrade()
+        {
+            if(GameModel.CoinNumber < 50)
+                return;
+            
+            if(currentSelected==null)
+                return;
+            
+            GameModel.CoinNumber -= 50;
+            _onCoinUpdated.amount = GameModel.CoinNumber;
+            _signalBus.Fire(_onCoinUpdated);
+            currentSelected.SetValues(currentSelected.upgradeLevel+1);
+            GameModel.TowerUpgrade(currentSelected.id, currentSelected.upgradeLevel);
+        }
         public void OnTapSignal(OnTapSignal onTapSignal)
         {
+            if (!_inMenu)
+                return;
+            
             InputDataParams inputDataParams = onTapSignal.InputDataParams;
             _cacheCameraRay.x = inputDataParams.width;
             _cacheCameraRay.y = inputDataParams.height;
@@ -86,7 +108,7 @@ namespace Scripts.Manager
             
             foreach (var turretTower in turretTowers)
             {
-                if (Vector3.Distance(_cacheCameraRayResults, turretTower.transform.position)<4f)
+                if (Vector3.Distance(_cacheCameraRayResults, turretTower.turretHead.transform.position)<2f)
                 {
                     currentSelected?.DeSelect();
                     turretTower.Select();
@@ -96,11 +118,6 @@ namespace Scripts.Manager
             }
         }
 
-        public void OnTowerUpgrade()
-        {
-            currentSelected.SetUpgrade(currentSelected.upgradeLevel+1);
-            GameModel.TowerUpgrade(currentSelected.id, currentSelected.upgradeLevel);
-        }
         
     }
 }

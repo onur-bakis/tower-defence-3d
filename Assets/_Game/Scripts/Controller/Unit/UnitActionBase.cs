@@ -2,7 +2,7 @@ using Scripts.Enums;
 using Scripts.Keys;
 using UnityEngine;
 
-namespace Scripts.Unit
+namespace Scripts.Controller.Unit
 {
     public class UnitActionBase : MonoBehaviour
     {
@@ -15,7 +15,10 @@ namespace Scripts.Unit
         private UnitActionBase _cacheUnitActionBaseOther;
         private ActionParams _cacheActionParams;
         
+        //When an action is received from other UnitActionBases
         public virtual void ActionReceived(ActionParams actionParams) { }
+        
+        //When sending actions to other base object
         public virtual void TakeAction(UnitActionBase enemy) { }
 
         public void Init(UnitTeams unitTeam)

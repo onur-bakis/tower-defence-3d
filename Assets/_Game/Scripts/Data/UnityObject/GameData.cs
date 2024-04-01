@@ -1,3 +1,4 @@
+using Scripts.Data.ValueObject;
 using UnityEngine;
 
 namespace Scripts.Data.UnityObject

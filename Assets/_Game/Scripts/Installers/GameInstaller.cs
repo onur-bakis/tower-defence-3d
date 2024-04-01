@@ -1,9 +1,8 @@
+using Scripts.Controller.Soldier;
 using Scripts.Enums;
 using Scripts.Manager;
 using Scripts.Models;
 using Scripts.Signals;
-using Scripts.Soldier;
-using Scripts.Managers;
 using UnityEngine;
 using Zenject;
 
@@ -13,7 +12,7 @@ namespace Scripts.Installers
     {
         [SerializeField] private UIManager _uiManager;
         [SerializeField] private TurretManager _turretManager;
-        [SerializeField] private InputManager _inputManager;
+        [SerializeField] private ProjectileManager _projectileManager;
         
         [SerializeField] private SoldierMelee _soldierMelee;
         [SerializeField] private SoldierRanged _soldierRanged;
@@ -54,7 +53,7 @@ namespace Scripts.Installers
         {
             Container.Bind<UIManager>().FromInstance(_uiManager).AsSingle();
             Container.Bind<TurretManager>().FromInstance(_turretManager).AsSingle();
-            // Container.Bind<InputManager>().FromInstance(_inputManager).AsSingle();
+            Container.Bind<ProjectileManager>().FromInstance(_projectileManager).AsSingle();
         }
 
         private void InstallSignals()

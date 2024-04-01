@@ -2,7 +2,7 @@ using Scripts.Signals;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts
+namespace Scripts.Manager
 {
     public class UIManager : MonoBehaviour
     {

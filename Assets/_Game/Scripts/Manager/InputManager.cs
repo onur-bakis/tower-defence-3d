@@ -1,9 +1,9 @@
-using Scripts.Signals;
 using Scripts.Keys;
+using Scripts.Signals;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts.Managers
+namespace Scripts.Manager
 {
     public class InputManager : MonoBehaviour
     {
@@ -34,7 +34,6 @@ namespace Scripts.Managers
 
                 _onTapSignal.InputDataParams = _inputDataParams;
                 _signalBus.Fire(_onTapSignal);
-                //TapSignal.Dispatch(_inputDataParams);
             }
         }
     }

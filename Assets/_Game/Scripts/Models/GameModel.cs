@@ -12,7 +12,7 @@ namespace Scripts.Models
         {
             get
             {
-                return PlayerPrefs.GetInt(CoinNumberString, 100);
+                return PlayerPrefs.GetInt(CoinNumberString, 1000);
             }
             set
             {

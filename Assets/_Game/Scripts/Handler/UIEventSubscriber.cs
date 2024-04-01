@@ -1,5 +1,6 @@
 using System;
 using Scripts.Enums;
+using Scripts.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;

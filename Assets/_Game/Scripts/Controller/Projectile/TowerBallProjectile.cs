@@ -1,7 +1,7 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
-using Scripts.Unit;
 
-namespace Scripts.Projectile
+namespace Scripts.Controller.Projectile
 {
     public class TowerBallProjectile : ProjectileBase
     {

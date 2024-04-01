@@ -1,13 +1,13 @@
-using Scripts.Data;
+using Scripts.Controller.Soldier;
 using Scripts.Data.UnityObject;
+using Scripts.Data.ValueObject;
 using Scripts.Enums;
 using Scripts.Models;
 using Scripts.Signals;
-using Scripts.Soldier;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts
+namespace Scripts.Manager
 {
     public class LevelManager : MonoBehaviour
     {

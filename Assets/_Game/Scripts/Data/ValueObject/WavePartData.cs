@@ -1,7 +1,7 @@
 using System;
 using Scripts.Enums;
 
-namespace Scripts.Data
+namespace Scripts.Data.ValueObject
 {
     [Serializable]
     public class WavePartData

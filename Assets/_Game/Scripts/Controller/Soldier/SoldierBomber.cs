@@ -1,10 +1,10 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
 using Scripts.Keys;
-using Scripts.Unit;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts.Soldier
+namespace Scripts.Controller.Soldier
 {
     public class SoldierBomber : SoldierBase, IPoolable<int,UnitTeams,SoldierTypes,IMemoryPool>
     {

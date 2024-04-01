@@ -1,7 +1,7 @@
 using Scripts.Controller;
+using Scripts.Controller.Soldier;
 using Scripts.Models;
 using Scripts.Signals;
-using Scripts.Soldier;
 using UnityEngine;
 using Zenject;
 

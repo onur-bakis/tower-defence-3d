@@ -1,7 +1,7 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
-using Scripts.Unit;
 
-namespace Scripts.Projectile
+namespace Scripts.Controller.Projectile
 {
     public class FireBallProjectile : ProjectileBase
     {
@@ -11,6 +11,7 @@ namespace Scripts.Projectile
             actionTypes = ActionTypes.Damage;
             projectileType = ProjectileType.Fire;
             actionParams.ActionTypes = actionTypes;
+            actionParams.Impact = 150f;
         }
         public override void Damage(UnitActionBase unitActionBase)
         {

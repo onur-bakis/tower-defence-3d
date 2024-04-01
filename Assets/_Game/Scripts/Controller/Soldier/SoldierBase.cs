@@ -1,17 +1,17 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
 using Scripts.Keys;
 using Scripts.Signals;
-using Scripts.Unit;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts.Soldier
+namespace Scripts.Controller.Soldier
 {
     public class SoldierBase : UnitActionBase
     {
-        [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Material teamDefendMaterial;
         [SerializeField] private Material teamAttackMaterial;
+        [SerializeField] private GameObject[] soldierMeshes;
         
         public float speed = 1f;
         public float slowSpeed = 1f;
@@ -93,6 +93,9 @@ namespace Scripts.Soldier
             
             if (Vector3.Distance(_enemy.transform.position, transform.position) < (range+size+_enemy.size))
             {
+                _cacheDirection = (_enemy.transform.position - transform.position).normalized;
+                _cacheDirection.y = 0;
+                transform.forward = _cacheDirection;
                 Attack(_enemy);
             }
             else
@@ -136,6 +139,7 @@ namespace Scripts.Soldier
         {
             _cacheDirection = (enemy.transform.position - transform.position).normalized;
             _cacheDirection.y = 0;
+            transform.forward = _cacheDirection;
             transform.position += _cacheDirection * (slowSpeed*Time.deltaTime * speed);
         }
 
@@ -147,14 +151,15 @@ namespace Scripts.Soldier
 
         public void ChangeVisual()
         {
-            
             if (unitTeams == UnitTeams.TeamDefend)
             {
-                _meshRenderer.materials = new Material[] { teamDefendMaterial };
+                soldierMeshes[0].SetActive(true);
+                soldierMeshes[1].SetActive(false);
             }
             else
             {
-                _meshRenderer.materials = new Material[] { teamAttackMaterial };
+                soldierMeshes[0].SetActive(false);
+                soldierMeshes[1].SetActive(true);
             }
         }
 

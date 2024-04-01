@@ -1,19 +1,16 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
 using Scripts.Keys;
 using Scripts.Manager;
 using Scripts.Signals;
-using Scripts.Unit;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts.Turret
+namespace Scripts.Controller.Turret
 {
     public class TurretTower : UnitActionBase
     {
         public TurretHead turretHead;
-        [SerializeField] private Material headMaterial;
-        [SerializeField] private Material selecredMaterial;
-        [SerializeField] private MeshRenderer _meshRenderer;
         
         public int id;
         public int upgradeLevel;
@@ -25,19 +22,12 @@ namespace Scripts.Turret
         public void Construct(SignalBus signalBus)
         {
             _signalBus = signalBus;
-            TurretManager.turretTowers.Add(this);
             _signalBus.Subscribe<OnLevelStart>(OnLevelStart);
         }
 
         private void OnLevelStart()
         {
             active = true;
-        }
-
-        public void SetUpgrade(int level)
-        {
-            upgradeLevel = level;
-            turretHead.upgradeLevel = level;
         }
         
         public override void TakeAction(UnitActionBase enemy)
@@ -66,15 +56,35 @@ namespace Scripts.Turret
             }
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.gameObject.CompareTag("UnitActionBase"))
+                return;
+
+            UnitActionBase unitActionBaseOther = other.gameObject.GetComponent<UnitActionBase>();
+            if (unitActionBaseOther.unitTeams == unitTeams)
+                return;
+            
+            TakeAction(unitActionBaseOther);
+        }
+        
+        public void SetValues(int level)
+        {
+            bool upgrade = turretHead.upgradeLevel != 0 && level > turretHead.upgradeLevel;
+
+            health = upgradeLevel * 100f;
+            upgradeLevel = level;
+            turretHead.SetUpgrade(level,upgrade);
+        }
+        
         public void Select()
         {
-            _meshRenderer.materials = new Material[]{selecredMaterial};
+            turretHead.Select();
         }
 
         public void DeSelect()
         {
-            _meshRenderer.materials =  new Material[]{headMaterial};
-
+            turretHead.DeSelect();
         }
     }
 }

@@ -1,16 +1,19 @@
+using Scripts.Controller.Unit;
 using Scripts.Enums;
 using Scripts.Keys;
-using Scripts.Unit;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Scripts.Projectile
+namespace Scripts.Controller.Projectile
 {
     public class ProjectileBase : MonoBehaviour
     {
         [SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Collider _colliderCollision;
         [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private ParticleSystem _particleSystemImpact;
+        [SerializeField] private ParticleSystem _particleSystemEffect;
+        
         
         public ActionTypes actionTypes = ActionTypes.Damage;
         public ProjectileType projectileType = ProjectileType.Fire;
@@ -22,6 +25,8 @@ namespace Scripts.Projectile
         public ActionParams actionParams;
 
         private bool impacted;
+
+        
         private void Start()
         {
             Init();
@@ -36,15 +41,9 @@ namespace Scripts.Projectile
             actionParams.Radius = _effectRange;
         }
 
-        public void OnCollisionEnter(Collision other)
-        {
-            Impact();
-            Invoke(nameof(EffectFinished),_effectTime);
-        }
-
         public void OnTriggerStay(Collider other)
         {
-            if(!impacted)
+            if(!impacted || other.isTrigger)
                 return;
             
             if (other.CompareTag("UnitActionBase"))
@@ -65,13 +64,17 @@ namespace Scripts.Projectile
 
         public virtual void Impact()
         {
-            //_meshRenderer.enabled = false;
+            transform.rotation = Quaternion.identity;
             _colliderCollision.enabled = false;
             _rigidbody.angularVelocity = Vector3.zero;
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.useGravity = false;
 
+            _particleSystemImpact.Play();
+            _particleSystemEffect.Play();
             impacted = true;
+            
+            Invoke(nameof(EffectFinished),_effectTime);
         }
         public virtual void Damage(UnitActionBase unitActionBase)
         {
@@ -79,8 +82,8 @@ namespace Scripts.Projectile
         
         public virtual void Move(Vector3 transformPosition)
         {
-            //transform.DOMove(transformPosition, 1f);
-            transform.DOJump(transformPosition, 5, 1, 1f);
+            transformPosition.y = 0f;
+            transform.DOJump(transformPosition, 10, 1, 1f).OnComplete(Impact);
         }
 
 
